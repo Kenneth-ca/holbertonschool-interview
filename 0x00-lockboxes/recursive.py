@@ -4,18 +4,17 @@ Determines if all given boxes can be opened
 """
 
 
-def FindKeys(k_found, boxes):
+def FindKeys(keys, l_box, keys_found):
     """
     Return keys found from all boxes
     """
-    i = 0
-    while i < len(k_found):
-        if boxes[k_found[i]] != [] or boxes[k_found[i]] not in k_found:
-            for k in boxes[k_found[i]]:
-                if k < len(boxes) and k not in k_found:
-                    k_found.append(k)
-        i += 1
-    return k_found
+    if not l_box:
+        return keys_found
+    for k in keys:
+        if k not in keys_found:
+            keys_found.append(k)
+            FindKeys(l_box[k], l_box, keys_found)
+    return keys_found
 
 
 def canUnlockAll(boxes):
@@ -24,14 +23,12 @@ def canUnlockAll(boxes):
     """
     if (type(boxes) is not list) or (len(boxes) == 0):
         return False
-
     lockboxes = {}
     for i in range(len(boxes)):
         lockboxes[i] = boxes[i]
+    keys = boxes[0]
+    keys_found = FindKeys(keys, lockboxes, [])
     lockboxes.pop(0)
-
-    keys_found = FindKeys([0], boxes)
-
     for i in keys_found:
         lockboxes.pop(i, None)
     return not lockboxes
