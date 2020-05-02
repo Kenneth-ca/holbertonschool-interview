@@ -37,21 +37,24 @@ int binary_tree_is_perfect(const binary_tree_t *tree)
 /**
  * check_swap - check for max numbers at parent node
  *
- * @parent: parent node
  * @child: child node
  * Return: no return
  */
-void check_swap(heap_t *parent, heap_t **child)
+void check_swap(heap_t **child)
 {
 	heap_t *child_aux;
 	int temp;
 
 	child_aux = *child;
-	if (parent->n < child_aux->n)
+	while (child_aux->parent)
 	{
-		temp = parent->n;
-		parent->n = child_aux->n;
-		child_aux->n = temp;
+		if (child_aux->parent->n < child_aux->n)
+		{
+			temp = child_aux->parent->n;
+			child_aux->parent->n = child_aux->n;
+			child_aux->n = temp;
+		}
+		child_aux = child_aux->parent;
 	}
 }
 
@@ -78,13 +81,13 @@ heap_t *heap_insert(heap_t **root, int value)
 		if (aux->left != NULL)
 		{
 			new = heap_insert(&(aux->left), value);
-			check_swap(aux, &(aux->left));
+			check_swap(&(aux->left));
 			return (new);
 		}
 		else
 		{
 			new = aux->left = binary_tree_node(*root, value);
-			check_swap(aux, &(aux->left));
+			check_swap(&(aux->left));
 			return (new);
 		}
 	}
@@ -92,13 +95,13 @@ heap_t *heap_insert(heap_t **root, int value)
 	if (aux->right != NULL)
 	{
 		new = heap_insert(&(aux->right), value);
-		check_swap(aux, &(aux->right));
+		check_swap(&(aux->right));
 		return (new);
 	}
 	else
 	{
 		new = aux->right = binary_tree_node(*root, value);
-		check_swap(aux, &(aux->right));
+		check_swap(&(aux->right));
 		return (new);
 	}
 
