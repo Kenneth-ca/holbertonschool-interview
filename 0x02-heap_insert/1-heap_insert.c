@@ -67,41 +67,40 @@ void check_swap(heap_t **child)
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *new, *aux;
+	heap_t *new;
 
-	aux = *root;
 	if (*root == NULL)
 	{
 		*root = binary_tree_node(NULL, value);
 		return (*root);
 	}
 
-	if (binary_tree_is_perfect(aux) || !binary_tree_is_perfect(aux->left))
+	if (binary_tree_is_perfect((*root)) || !binary_tree_is_perfect((*root)->left))
 	{
-		if (aux->left != NULL)
+		if ((*root)->left != NULL)
 		{
-			new = heap_insert(&(aux->left), value);
-			check_swap(&(aux->left));
+			new = heap_insert(&((*root)->left), value);
+			check_swap(&((*root)->left));
 			return (new);
 		}
 		else
 		{
-			new = aux->left = binary_tree_node(*root, value);
-			check_swap(&(aux->left));
+			new = (*root)->left = binary_tree_node(*root, value);
+			check_swap(&((*root)->left));
 			return (new);
 		}
 	}
 
-	if (aux->right != NULL)
+	if ((*root)->right != NULL)
 	{
-		new = heap_insert(&(aux->right), value);
-		check_swap(&(aux->right));
+		new = heap_insert(&((*root)->right), value);
+		check_swap(&((*root)->right));
 		return (new);
 	}
 	else
 	{
-		new = aux->right = binary_tree_node(*root, value);
-		check_swap(&(aux->right));
+		new = (*root)->right = binary_tree_node(*root, value);
+		check_swap(&((*root)->right));
 		return (new);
 	}
 
