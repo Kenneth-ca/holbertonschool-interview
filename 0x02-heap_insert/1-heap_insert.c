@@ -42,20 +42,62 @@ int binary_tree_is_perfect(const binary_tree_t *tree)
  */
 void check_swap(heap_t **child)
 {
-	heap_t *child_aux;
+	heap_t *aux;
 	int temp;
 
-	child_aux = *child;
-	while (child_aux->parent)
+	aux = *child;
+	while (aux->parent)
 	{
-		if (child_aux->parent->n < child_aux->n)
+		if (aux->parent->n < aux->n)
 		{
-			temp = child_aux->parent->n;
-			child_aux->parent->n = child_aux->n;
-			child_aux->n = temp;
+			temp = aux->parent->n;
+			aux->parent->n = aux->n;
+			aux->n = temp;
+			*child = aux->parent;
 		}
-		child_aux = child_aux->parent;
+		aux = aux->parent;
 	}
+}
+
+/**
+ * recursion_heap - a function that inserts nodes for Max Binary Heap
+ * @root: a double pointer to the root node of the Heap
+ * @value: value store in the node to be inserted
+ *
+ * Return: a pointer to the inserted node, or NULL on failure
+ */
+heap_t *recursion_heap(heap_t **root, int value)
+{
+	heap_t *new;
+
+	new = *root;
+	if (binary_tree_is_perfect((*root)) || !binary_tree_is_perfect((*root)->left))
+	{
+		if ((*root)->left != NULL)
+		{
+			new = recursion_heap(&((*root)->left), value);
+			return (new);
+		}
+		else
+		{
+			(*root)->left = binary_tree_node(*root, value);
+			new = (*root)->left;
+			return (new);
+		}
+	}
+
+	if ((*root)->right != NULL)
+	{
+		new = recursion_heap(&((*root)->right), value);
+		return (new);
+	}
+	else
+	{
+		(*root)->right = binary_tree_node(*root, value);
+		new = (*root)->right;
+		return (new);
+	}
+	return (NULL);
 }
 
 /**
@@ -67,7 +109,7 @@ void check_swap(heap_t **child)
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-	heap_t *inserted;
+	heap_t *new;
 
 	if (*root == NULL)
 	{
@@ -75,35 +117,13 @@ heap_t *heap_insert(heap_t **root, int value)
 		return (*root);
 	}
 
-	inserted = binary_tree_node(NULL, value);
-	if (binary_tree_is_perfect((*root)) || !binary_tree_is_perfect((*root)->left))
-	{
-		if ((*root)->left != NULL)
-		{
-			heap_insert(&((*root)->left), value);
-			check_swap(&((*root)->left));
-			return (inserted);
-		}
-		else
-		{
-			(*root)->left = binary_tree_node(*root, value);
-			check_swap(&((*root)->left));
-			return (inserted);
-		}
-	}
+	new = binary_tree_node(NULL, value);
+	if (new == NULL)
+		return (NULL);
 
-	if ((*root)->right != NULL)
-	{
-		heap_insert(&((*root)->right), value);
-		check_swap(&((*root)->right));
-		return (inserted);
-	}
-	else
-	{
-		(*root)->right = binary_tree_node(*root, value);
-		check_swap(&((*root)->right));
-		return (inserted);
-	}
+	new = recursion_heap(&(*root), value);
 
-	return (NULL);
+	check_swap(&new);
+
+	return (new);
 }
