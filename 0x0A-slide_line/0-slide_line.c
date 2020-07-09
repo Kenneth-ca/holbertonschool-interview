@@ -14,12 +14,14 @@ void left_slide(int *line, size_t size)
 	for (i = 0, j = 0; i < size;)
 	{
 		if (line[i] == 0)
-			for (; line[i] == 0; i++);
+			for (; line[i] == 0;)
+				i++;
 		if (i == (size - 1))
 			break;
 		j = i + 1;
 		if (line[j] == 0)
-			for (; line[j] == 0; j++);
+			for (; line[j] == 0;)
+				j++;
 		if (line[i] == line[j])
 		{
 			line[i] = line[i] + line[j];
